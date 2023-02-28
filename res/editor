@@ -1,0 +1,15 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+extname() {
+	local filename=$(basename -- "$1")
+	local extension="${filename##*.}"
+	local filename="${filename%.*}"
+	echo $extension
+}
+
+runext() {
+	local ext=$(extname $1)
+	./editor-$ext $@
+}
+
+runext $1

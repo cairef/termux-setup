@@ -1,0 +1,6 @@
+shortcut.create-session = ctrl + t
+shortcut.previous-session = ctrl + r
+shortcut.next-session = ctrl + y
+
+extra-keys = [['ESC','CTRL','-','LEFT','DOWN','UP','RIGHT']]
+allow-external-apps=true

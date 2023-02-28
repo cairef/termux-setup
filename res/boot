@@ -1,0 +1,58 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+## Init Log and Setup
+logdir=~/log
+logfile=$logdir/boot
+if [ -d $logdir.old ]; then
+	rm -r $logdir.old
+fi
+if [ -d $logdir ]; then
+	mv $logdir $logdir.old
+fi
+mkdir $logdir
+
+(
+	echo " ========== [$(date +"%T.%N")] Initializing...  =========="
+
+	. ~/.bashrc
+
+	echo " ========== [$(date +"%T.%N")] Booting...  =========="
+
+	## Wake Lock
+	termux-wake-lock
+
+	## SSH Server
+	sshd
+
+	## Automate Restart
+	am start -a com.llamalab.automate.intent.action.START_FLOW -d content://com.llamalab.automate.provider/flows/36/statements/9
+
+	# TODO: comment ids
+	# TODO: check moto/mia2 compatibility
+	#am start -a com.llamalab.automate.intent.action.STOP_FLOW
+	#am start -a com.llamalab.automate.intent.action.START_FLOW -d content://com.llamalab.automate.provider/flows/19/statements/1
+	#am start -a com.llamalab.automate.intent.action.START_FLOW -d content://com.llamalab.automate.provider/flows/26/statements/1
+	#am start -a com.llamalab.automate.intent.action.START_FLOW -d content://com.llamalab.automate.provider/flows/30/statements/1
+
+	## Syncthing
+	syncthing --no-browser >$logdir/boot-sync 2>&1 &
+	## ADB TCP
+	adbtcp
+
+	## Termux Upgrade
+	#-echo " ========== [$(date +"%T.%N")] Uptading...  =========="
+	#-u // auto update disabled
+
+	echo " ========== [$(date +"%T.%N")] Starting servers...  =========="
+
+	## Gallery Server
+	(gallery -w) >>$logdir/boot-gallery 2>&1 &
+	## Insta Server
+	(insta) >>$logdir/boot-insta 2>&1 &
+	## Cmder Server
+	(cmder) >>$logdir/boot-cmder 2>&1 &
+
+	## Boot Finish
+	echo " ========== [$(date +"%T.%N")] Boot Finished  =========="
+	termux-toast "Termux: Boot Finished"
+) >$logfile 2>&1

@@ -1,0 +1,3 @@
+[['ESC','CTRL','-','LEFT','DOWN','UP','RIGHT']]
+[[ESC,TAB,CTRL,ALT,{key:'-',popup:'|'},DOWN,UP]]
+[['ESC','/','-','HOME','UP','END','PGUP'],['TAB','CTRL','ALT','LEFT','DOWN','RIGHT','PGDN']]

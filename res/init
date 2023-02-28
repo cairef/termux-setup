@@ -1,0 +1,300 @@
+#! /data/data/com.termux/files/usr/bin/bash
+
+ip=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1 -d'/')
+echo $ip
+
+export USER=$(whoami)
+export vdir="~/vdir"
+export ext="/storage/emulated/0"
+export ss="$ext/caire/StorySave4Insta"
+export sss="$ss/Saved Stories"
+
+export dev="$HOME/dev"
+export dn="$dev/node"
+export dnode="$dev/node"
+export dni="$dn/insta"
+export dnis="$dn/insta/client"
+export dnisp="$dn/insta/client/pages"
+export dng="$dn/gallery"
+export dngs="$dn/gallery/web/src"
+export dngsp="$dn/gallery/web/src/pages"
+export dt="$dev/termux"
+export dts="$dev/termux/shortcuts"
+export dtst="$dev/termux/shortcuts/tasks"
+export dtn="$dev/termux-new"
+
+rdnl="aju ari cecel charli duda lea sel fran dani debora jade livia lea julia lea coelha addison malu mah cat sofia fran fran valentina larissa bruna feeh fefe luisa-marquesa laura-marquesa tilia lea francesca chloe"
+
+shopt -s extglob
+
+e() {
+	echo "Starting Application..."
+
+	devp=~/dev/node
+	engine="node"
+	if [[ $1 == "mon" ]]; then
+		engine=nodemon
+		shift
+	fi
+	if [[ $1 == "ever" ]]; then
+		engine=forever
+		shift
+	fi
+
+	re='^[0-9]+$'
+	if [[ $1 =~ $re ]]; then
+		xdg-open http://localhost:$1
+		shift
+	fi
+
+	args=($*)
+	proj=${args[0]}
+	arg=${args[@]:1}
+
+	file="$devp/$proj"
+	if [ ! -f $file ]; then file=$file/app.js; fi
+	if [ ! -f $file ]; then file=$file/app.ts; fi
+	if [ $engine == nodemon ]; then engine="$engine -w $file --"; fi
+
+	if [ -f "$file" ]; then
+		$engine $file $arg
+	else
+		echo "ERROR: No Valid File"
+	fi
+}
+
+ed() { cd ~/dev/node/$@; }
+ex() { e mon 5000 $@; }
+
+nfm() {
+	if [[ $@ == '' ]]; then
+		e 5000 nfm $EXT
+	elif [[ $@ == 'home' ]]; then
+		e 5000 nfm $HOME
+	else
+		e 5000 nfm $@
+	fi
+}
+rdn() { node ~/dev/nodex/random.js $@; }
+rdnx() { rdn l $rdnl; }
+rdnxs() { rdn s $rdnl; }
+alvenge() {
+	cd ~/dev/firebase/alvenge
+	firebase serve
+}
+lh() {
+	port=$1
+	shift
+	xdg-open http://127.0.0.1:$port/$@
+	# am start -a android.intent.action.VIEW -d http://127.0.0.1:$port/$@ com.android.chrome
+}
+lhid() {
+	start_web "$1" "http://127.0.0.1:$2/$3"
+}
+og() { lhid gallery 8003 /; }
+om() { lhid music 8003 music; }
+i() { lh 8010; }
+start_web() {
+	id="com.cairef:$1"
+	url="$2"
+
+	browser="com.kiwibrowser.browser"
+	# browser="com.android.chrome"
+	# browser="-n org.mozilla.firefox/org.mozilla.fenix.IntentReceiverActivity"
+
+	echo $id
+	echo $url
+	echo $browser
+
+	# am start --user 0 \
+	am start \
+		"$browser" -d "$url" \
+		-e com.android.browser.application_id "$id"
+
+	#am start --user 0 \
+	#  -a android.intent.action.VIEW \
+	#  "$browser" -d "$url" \
+	#  -e com.android.browser.application_id "$id"
+}
+
+ftpl() { busybox tcpsvd -vE $ip 5000 ftpd -w $HOME; }
+ftpe() { busybox tcpsvd -vE $ip 5000 ftpd -w $ext; }
+ftpx() { busybox tcpsvd -vE $ip 5000 ftpd -w /; }
+
+notif() { termux-notification $@; }
+opennoti() { notif -t "Scheduled Start" -c "Open $@" --action "xdg-open $@"; }
+
+einit() {
+	vim ~/.bashrc
+	. ~/.bashrc
+}
+rinit() {
+	. ~/.bashrc
+}
+px() { ping 192.168.0.1; }
+
+boot() { . ~/.termux/boot/boot; }
+eboot() { vim ~/.termux/boot/boot; }
+dboot() {
+	echo " ===== BOOT:     ===== "
+	cat ~/.log/boot
+	echo " ===== NMA:      ===== "
+	cat ~/.log/boot-nma
+	echo " ===== GALLERY:  ===== "
+	cat ~/.log/boot-gallery
+	echo " ===== SCHOOL:   ===== "
+	cat ~/.log/boot-school
+	echo " ===== SYNC:     ===== "
+	cat ~/.log/boot-sync
+}
+tboot() {
+	if [ -f ~/.termux/boot/boot ]; then
+		mv ~/.termux/boot/boot ~/.termux/boot.sh
+		echo boot off
+	else
+		mv ~/.termux/boot.sh ~/.termux/boot/boot
+		echo boot on
+	fi
+}
+fboot() {
+	if [ -f ~/.termux/boot/boot ]; then
+		. ~/.termux/boot/boot
+	else
+		. ~/.termux/boot.sh
+	fi
+}
+
+s8() { cd && ./vms/ubuntu18/start-ubuntu.sh; }
+s9() { cd && ./vms/ubuntu19/start-ubuntu19.sh; }
+r8() { rm -rf ~/vms/ubuntu18 && 7z x ~/vms/ubuntu18.7z ~/vms && u8; }
+r9() { rm -rf ~/vms/ubuntu19 && 7z x ~/vms/ubuntu19.7z ~/vms && u9; }
+b8() { 7z a ~/vms/ubuntu18.7z ~/vms/ubuntu18; }
+b9() { 7z a ~/vms/ubuntu19.7z ~/vms/ubuntu19; }
+
+wsync() { xdg-open "http://localhost:8384"; }
+code() {
+	lh 3000
+	teditor --dir "~/dev/node/$1"
+}
+u() {
+	pkg upgrade -y
+	yarndev
+	yarn global upgrade --latest
+}
+
+adbtcp() {
+	sudo setprop service.adb.tcp.port 5555
+	sudo stop adbd
+	sudo start adbd
+}
+
+killnode() {
+	kill $(pidof node)
+}
+
+reboot() {
+	pm2 kill
+	killnode
+	boot
+}
+
+cmder() { (
+	cd ~/dev/node/cmder/server
+	$(node ~/dev/termux/yarn-run-parser.js yarn serve-prod)
+); }
+gallery() { (
+	cd ~/dev/node/gallery
+	$(node ~/dev/termux/yarn-run-parser.js yarn serve-prod) $@
+); }
+insta() { (
+	cd ~/dev/node/insta
+	$(node ~/dev/termux/yarn-run-parser.js yarn serve-prod) $@
+); }
+snaptik() { (cd ~/dev/node/snaptik && . main.sh); }
+waitport() { cd ~/dev/node/wait-port && node app.js $@; }
+yarndev() {
+	(cd ~/dev/node/cmder/server && yarn)
+	(cd ~/dev/node/devcore && yarn)
+	(cd ~/dev/node/filesort && yarn)
+	(cd ~/dev/node/snaptik && yarn)
+
+	(cd ~/dev/node/gallery && yarn)
+	(cd ~/dev/node/insta && yarn)
+	(cd ~/dev/node/wait-port && yarn)
+}
+yarndevreact() {
+	(cd ~/dev/node/gallery/web && yarn)
+	(cd ~/dev/node/insta/client && yarn)
+}
+
+fix-shebang() {
+	termux-fix-shebang $(which node)
+	termux-fix-shebang $(which ts-node)
+	termux-fix-shebang $(which nodemon)
+	termux-fix-shebang $(which yarn)
+}
+
+tcs() {
+	termux-clipboard-set $@
+}
+
+cleandev() {
+	rm -r $dnode/devcore/dist/cache
+	rm -r $dng/node_modules
+	rm -r $dng/web/node_modules
+	rm -r $dni/node_modules
+	rm -r $dni/client/node_modules
+}
+
+fconfs() {
+	find ~/dev -name "*sync-conflict*"
+}
+
+myhelp() {
+	echo "fconfs(): find sync conflicts in dev"
+}
+
+mkcd() {
+	mkdir $@
+	cd $@
+}
+
+rootfix() {
+	sudo pm clear com.google.android.gms
+	sudo pm clear com.google.android.googlequicksearchbox
+	sudo rm -rf /data/dalvik-cache
+	sudo rm -rf /cache/dalvik-cache
+	sudo am broadcast -a android.intent.action.BOOT_COMPLETED
+}
+
+termux() {
+	echo TermuxAPI help:
+	cat ~/dev/termux/api-info.txt
+}
+
+ownme() {
+	sudo chown -R $USER:$USER $@
+}
+owndev() {
+	ownme dev dev-data
+}
+
+ubuntu() {
+	cd ~/ubuntu
+	./start-ubuntu20.sh
+}
+
+rui() {
+	echo "sys.pid: $(sudo pidof com.android.systemui)"
+	sudo kill $(sudo pidof com.android.systemui)
+	sudo am start "com.android.systemui"
+	echo "system restarted!"
+}
+
+setup_kb() {
+	select kb_layout in $(cat ./kb_layouts); do
+		echo "setting kb to $kb_layout"
+		sed -i "s/extra-keys.*/extra-keys = "$kb_layout"/" ./props
+		break
+	done
+}
