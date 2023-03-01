@@ -31,10 +31,7 @@ fi
 
 select install_opt in full full_non_root essentials upgrade_only; do
   echo "Upgrading..."
-  # TODO
-  # pkg upgrade with YES
-  # pkg upgrade -y --force-overwrite
-  pkg upgrade -fy
+  pkg upgrade -y -o DPkg::options::="--force-all"
 
   case $install_opt in
   full)
