@@ -75,19 +75,22 @@ if [ -e ~/../usr/etc/motd ]; then
 fi
 
 if [ ! -d ~/dev ]; then
-  source ~/.bashrc
   echo "dev not found!"
-  echo "starting local init"
+  echo "sourcing local init..."
   source res/init
+  echo "starting syncthing..."
+  syncthing --no-browser &
+  >/dev/null
   echo "opening syncthing..."
   wsync
 fi
-while [ -d ~/dev ]; do
-  echo "dev not found. type enter to continue when dev exists"
+while [ ! -d ~/dev ]; do
+  echo "[INFO] dev not found loop. type enter to continue when dev exists"
   read
 done
 
-echo "dev found! linking files..."
+echo "dev found!"
+echo "linking dev files..."
 lns $dev/termux-install/init ~/.bashrc
 lns $dev/termux-install/boot ~/.termux/boot/boot
 lns $dev/termux-install/props ~/.termux/termux.properties
